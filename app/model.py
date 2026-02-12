@@ -4,6 +4,11 @@ from sklearn.metrics.pairwise import cosine_similarity
 from app.utils import preprocess_text
 import os
 import pandas as pd
+import nltk
+
+nltk.download("punkt")
+nltk.download("stopwords")
+nltk.download("punkt_tab")
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, "data", "spotify_millsongdata.csv")
@@ -11,13 +16,11 @@ DATA_PATH = os.path.join(BASE_DIR, "data", "spotify_millsongdata.csv")
 df = pd.read_csv(DATA_PATH)
 
 # Reduce dataset size for deployment
-df = df.sample(5000, random_state=42)
-
+df = df.sample(3000, random_state=42)
 # Drop unnecessary columns
 df = df.drop("link", axis=1).reset_index(drop=True)
 
 df["cleaned_text"] = df["text"].apply(preprocess_text)
-
 
 tfidf_vectorizer = TfidfVectorizer(max_features=5000)
 tfidf_matrix = tfidf_vectorizer.fit_transform(df["cleaned_text"])
